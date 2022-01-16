@@ -1,0 +1,279 @@
+import os.path
+ import os
+ import ast
+
+ file_exists = os.path.exists('expenses.txt')
+ list_expenses = []
+
+ i= -1
+
+ still_checking = False
+ done = False
+ over = False
+ ## beginning of program
+ print("Welcome to your Budgeting Program!\n ")
+
+ if file_exists == True:
+   if os.stat('expenses.txt').st_size != 0:
+     print("Loaded your save data.\n")
+     file1 = open('expenses.txt', 'r')
+     Lines = file1.readlines()
+     for line in Lines:
+       list_expenses.append(line)
+
+     spending_limits = ast.literal_eval(list_expenses[0])
+     expenses = ast.literal_eval(list_expenses[1])
+     Monthly_Limits = ast.literal_eval(list_expenses[2])
+     yearly_goal = ast.literal_eval(list_expenses[3])
+
+ else:
+   spending_limits = {}
+   expenses = {}
+   Monthly_Limits = {'January': 0, 'February': 0, 'March': 0, 'April': 0, 'May': 0, 'June': 0, 'July': 0, 'August': 0, 'September': 0, 'October': 0, 'November': 0, 'December': 0}
+   yearly_goal = {'2021': 0}
+
+ ## lets you go to create a budget if you answer yes
+ while True:
+   print("Please choose a number from the following: \n1: Add a Budget\n2: Add an Expense\n3: Budget List\n4: Expense List\n5: Monthly Limits\n6: Yearly Goal\n7: Set a Monthly Limit\n8: Set a Yearly Goal\n9: Exit\n10: Remove Item from List\n11: Delete User Data\n ")
+
+   answer = input()
+   if answer == "1":
+     i = 0
+
+   elif answer == "2":
+     i = 1
+
+   elif answer == "3":
+     i = 2
+
+   elif answer == "4":
+     i = 3
+
+   elif answer == "7":
+     i = 4
+
+   elif answer == "5":
+     i = 5
+
+   elif answer == "9":
+     file1 = open('expenses.txt', 'w')
+     file1.writelines(str(spending_limits))
+     file1.write('\n')
+     file1.writelines(str(expenses))
+     file1.write('\n')
+     file1.writelines(str(Monthly_Limits))
+     file1.write('\n')
+     file1.writelines(str(yearly_goal))
+     file1.write('\n')
+     file1.close()
+     break
+
+   elif answer == "8":
+     i = 6
+
+   elif answer == "6":
+     i = 7
+
+   elif answer == "10":
+     i = 8
+
+   elif answer == "11":
+     i = 9
+
+   else:
+     print("Please choose a number 1-11.")
+
+   if i == 0:
+     while not over:
+         finished = False
+         over = False
+         answer = input("Do you want to create a budget?\n")
+         if answer == "yes":
+           category = input("Enter a category.\n")
+           while not finished:
+             try:
+               expense = int(input("Enter a spending limit.\n"))
+               spending_limits[category] = expense
+
+             except ValueError:
+               print("This must be a integer!")
+               continue
+
+             finished = True
+         elif answer == "no":
+             i = -1
+             print('\n')
+             break
+         else: 
+             print("Please respond 'yes' or 'no'")
+
+   elif i == 1:
+     while not over:
+         finished = False
+         over = False
+         answer = input("Do you want to add an expense?\n")
+         if answer == "yes":
+           category = input("Enter a category.\n")
+           while not finished:
+             try:
+               expense = int(input("Enter a price.\n"))
+               expenses[category] = expense
+
+             except ValueError:
+               print("This must be a integer!")
+               continue
+
+             finished = True
+         elif answer == "no":
+             i = -1
+             print('\n')
+             break
+         else: 
+             print("Please respond 'yes' or 'no'")
+
+   elif i == 2:
+     i = -1
+     for key, value in spending_limits.items(): 
+       print('Category: {}, Limit: ${}'.format(key, value))
+     print('\n')
+
+   elif i == 3:
+     for key, value in expenses.items(): 
+       print('Category: {}, Expense: ${}'.format(key, value))
+     print('\n')
+
+   elif i == 4:
+     while True:
+         almost_done = False
+         answer = input("Would you like to set a monthly limit?\n")
+         if answer == "yes":
+           while not almost_done:
+             month = input("Which month?\n")
+             if month in Monthly_Limits:
+               while True:
+                 try:
+                   limit = int(input("Enter a limit.\n"))
+                   Monthly_Limits[month] = limit
+                   almost_done = True
+                   break
+
+                 except ValueError:
+                   print("This must be a integer!")
+                   continue
+
+             else:
+               print("Please choose one of the 12 months (January, February, etc.")
+               continue
+
+         elif answer == "no":
+             i = -1
+             print('\n')
+             break
+         else: 
+             print("Please respond 'yes' or 'no'")
+
+   elif i == 5:
+     for key, value in Monthly_Limits.items(): 
+       print('Month: {}, Limit: ${}'.format(key, value))
+     print('\n')
+
+   elif i == 6:
+     while not over:
+         finished = False
+         answer = input("Would you like to set a limit for the year?\n")
+         if answer == "yes":
+           while not finished:
+               try:
+                 limit = int(input("Enter a limit.\n"))
+                 yearly_goal['2021'] = limit
+
+               except ValueError:
+                 print("This must be a integer!")
+                 continue
+
+               finished = True
+               over = True
+
+         elif answer == "no":
+             i = -1
+             print('\n')
+             break
+         else: 
+             print("Please respond 'yes' or 'no'")
+
+   elif i == 7:
+     for key, value in yearly_goal.items(): 
+       print('Year: {}, Limit: ${}'.format(key, value))
+     print('\n')
+
+   elif i == 8:
+     while True:
+         almost_finished = False
+         over_with = False
+         done_with = False
+         answer = input("Would you like to remove a category from a list? ")
+         if answer == "yes":
+           while not almost_finished:
+             answer2 = input("Please choose 'Budget List', 'Expense List', or 'cancel'.\n")
+             if answer2 == "Budget List":
+               for key, value in spending_limits.items(): 
+                   print('Category: {}, Limit: ${}'.format(key, value))
+               while not over_with:
+                 user_category = input("Remove a category, or cancel.  ")
+                 if user_category in spending_limits:
+                   del spending_limits[user_category]
+                   print(str(user_category) + " was removed. ")
+                   over_with = True
+
+                 elif user_category == 'cancel':
+                   over_with = True
+
+                 else:
+                   print("Please choose something in your list. ")
+
+             elif answer2 == "Expense List":
+               for key, value in expenses.items(): 
+                   print('Category: {}, Expense: ${}'.format(key, value))
+               while not done_with:
+                 user_category = input("Remove which category?\n")
+                 if user_category in expenses:
+                   del expenses[user_category]
+                   print(str(user_category) + " was removed. ")
+                   done_with = True
+                 else:
+                   print("Please choose something in your list. ")
+
+             elif answer2 == 'cancel':
+               almost_finished = True
+
+             else:
+               print("Choose one of the three options. ")
+
+         elif answer == "no":
+             i = -1
+             print('\n')
+             break
+
+         else: 
+             print("Please respond 'yes' or 'no' ")
+
+   elif i == 9:
+     if file_exists == True:
+       while True:
+         answer = input("Are you sure you want to delete User Data?\n")
+         if answer == "yes":
+           os.remove("expenses.txt")
+           i = -1
+           print('\n')
+           break
+
+         elif answer == "no":
+           print('\n')
+           break
+
+         else:
+           print("Please respond 'yes' or 'no'. ")
+     else:
+       print("There is no saved User Data")
+       i = -1
+       print('\n')
